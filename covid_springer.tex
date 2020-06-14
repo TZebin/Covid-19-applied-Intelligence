@@ -1,0 +1,434 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a general template file for the LaTeX package SVJour3
+% for Springer journals.          Springer Heidelberg 2014/09/25
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % signs as needed.
+%
+% This template includes a few options for different layouts and
+% content for various journals. Please consult a previous issue of
+% your journal as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% First comes an example EPS file -- just ignore it and
+% proceed on the \documentclass line
+% your LaTeX will extract the file if required
+\begin{filecontents*}{example.eps}
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 19 19 221 221
+%%CreationDate: Mon Sep 29 1997
+%%Creator: programmed by hand (JK)
+%%EndComments
+gsave
+newpath
+  20 20 moveto
+  20 220 lineto
+  220 220 lineto
+  220 20 lineto
+closepath
+2 setlinewidth
+gsave
+  .4 setgray fill
+grestore
+stroke
+grestore
+\end{filecontents*}
+%
+\RequirePackage{fix-cm}
+%
+%\documentclass{svjour3}                     % onecolumn (standard format)
+%\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
+\usepackage{appendix}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage{lineno}
+\usepackage{array}
+\usepackage{longtable}
+%\usepackage{natbib}
+\usepackage{cite}
+%\linenumbers
+%
+% \usepackage{mathptmx}      % use Times fonts if available on your TeX system
+%
+% insert here the call for the packages your document requires
+%\usepackage{latexsym}
+% etc.
+%
+% please place your own definitions here and don't use \def but
+% \newcommand{}{}
+%
+% Insert the name of "your journal" with
+% \journalname{myjournal}
+
+%
+\usepackage{subcaption}
+\usepackage{flushend}
+\usepackage{url} 
+%\markboth{\journalname, VOL. XX, NO. XX, XXXX 2017}
+%{Author \MakeLowercase{\textit{et al.}}:)}
+\usepackage{tabularx}  % allows fixed width tables
+\usepackage{ctable}    % modifies \hline for use in table
+\newcommand{\otoprule}{\midrule[\heavyrulewidth]}         
+\newcolumntype{Z}{>{\centering\arraybackslash}X}  % tabularx centered columns 
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+
+% Custom commands
+
+\newcommand{\chap}[1]{Chapter~\ref{#1}}
+\newcommand{\sect}[1]{Section~\ref{#1}}
+\newcommand{\fig}[1]{Fig.~\ref{#1}}
+\newcommand{\tab}[1]{Table~\ref{#1}}
+\newcommand{\equ}[1]{(\ref{#1})}
+       
+
+\newcommand*\patchAmsMathEnvironmentForLineno[1]{%
+\expandafter\let\csname old#1\expandafter\endcsname\csname #1\endcsname
+\expandafter\let\csname oldend#1\expandafter\endcsname\csname end#1\endcsname
+\renewenvironment{#1}%
+{\linenomath\csname old#1\endcsname}%
+{\csname oldend#1\endcsname\endlinenomath}}% 
+\newcommand*\patchBothAmsMathEnvironmentsForLineno[1]{%
+\patchAmsMathEnvironmentForLineno{#1}%
+\patchAmsMathEnvironmentForLineno{#1*}}%
+\AtBeginDocument{%
+\patchBothAmsMathEnvironmentsForLineno{equation}%
+\patchBothAmsMathEnvironmentsForLineno{align}%
+\patchBothAmsMathEnvironmentsForLineno{flalign}%
+\patchBothAmsMathEnvironmentsForLineno{alignat}%
+\patchBothAmsMathEnvironmentsForLineno{gather}%
+\patchBothAmsMathEnvironmentsForLineno{multline}%
+}
+
+
+
+
+\begin{document}
+
+\title{COVID-19 detection and disease progression visualization: Deep learning on chest X-rays for classification and coarse localization %\thanks{Grants or other notes
+%about the article that should go on the front page should be
+%placed here. General acknowledgments should be placed at the end of the article.}
+}
+
+%\titlerunning{Short form of title}        % if too long for running head
+
+\author{Tahmina Zebin         \and
+        Shahadate Rezvy \and
+        Wei Pang
+        %etc.
+}
+
+%\authorrunning{Short form of author list} % if too long for running head
+
+\institute{T. Zebin \at
+               School of Computing Sciences, University of East Anglia, UK, 
+              \email{t.zebin@uea.ac.uk}           %  \\
+%             \emph{Present address:} of F. Author  %  if needed
+           \and
+           S. Rezvy \at
+               School of Science and Technology, Middlesex University London, UK, 
+               \email{s.rezvy@mdx.ac.uk} 
+              \and   
+                W. Pang              \at
+               School of Mathematical \& Computer Sciences, Heriot-Watt University, UK, 
+               \email{W.Pang@hw.ac.uk} 
+}
+
+\date{Received: 17 May 2020 / Accepted: DD Month YEAR}
+% The correct dates will be entered by the editor
+
+
+\maketitle
+
+\begin{abstract}
+Chest X-rays are playing an important role in the testing and diagnosis of COVID-19 disease in the recent pandemic. However, due to the limited amount of labelled medical images, automated classification of these images for positive and negative cases remains the biggest challenge in their reliable use in diagnosis and disease progression. We applied and implemented a  transfer learning pipeline for classifying COVID-19 chest X-ray images from two publicly available chest X-ray datasets {\footnote{https://github.com/ieee8023/covid-chestxray-dataset}$^,$\footnote{https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia}}. The classifier effectively distinguishes inflammation in lungs due to COVID-19 and pneumonia (viral and bacterial) from the ones with no infection (normal). We have used multiple pre-trained convolutional backbones as the feature extractor and achieved an overall detection accuracy of  90\% , 94.3\%, 96.8\% for the VGG16, ResNet50 and EfficientNetB0 backbones respectively. Additionally, we trained a generative adversarial framework (a cycleGAN) to generate and augment the minority COVID-19 class in our approach. For visual explanations and interpretation purposes, we visualized the regions of input that are important for predictions and a gradient class activation mapping (Grad-CAM) technique is used in the pipeline to produce a coarse localization map of the highlighted regions in the image. This activation map can be used to monitor affected lung regions during disease progression and severity stages.
+
+\keywords{Activation Maps \and COVID-19 \and Deep Neural networks \and Transfer Learning}
+% \PACS{PACS code1 \and PACS code2 \and more}
+% \subclass{MSC code1 \and MSC code2 \and more}
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+ The 2019 novel coronavirus (COVID-19) has become a serious public health problem across the world and is approaching approximately 7.759 million cases worldwide according to the statistics of European Centre for Disease Prevention and Control on June 14th, 2020. The COVID-19 infection may manifest itself as a flu-like illness potentially progressing to an acute respiratory distress syndrome. Despite the worldwide research efforts over the past few months, early detection of COVID-19 remains a challenging problem due to limited resources and the amount of data available for research. The gold standard screening method in COVID-19 is the reverse-transcription polymerase chain reaction (RT-PCR). Chest radiography imaging is being used as an alternative screening method and done in parallel to PCR viral testing  \cite{wang2020covid}.  Additionally, false negatives have been reported in PCR results due to insufficient cellular content in the sample or time-consuming nature and inadequate detection when there were positive radiological findings \cite{araujo2020covid}. The accuracy of Chest X-ray (CXR) diagnosis of COVID-19 infection strongly relies on radiological expertise due to the complex morphological patterns of lung involvement which can change in extent and appearance over time. If these patterns are detected with high accuracy, it can enable rapid triaging for
+screening, diagnosis, and management of patients with suspected or known COVID-19 infection \cite{luz2020efficient}.
+
+However, the limited number of trained thoracic radiologists limits the reliable interpretation of complex chest examinations, especially in developing countries. Deep learning techniques, in particular convolutional neural networks (CNNs), have been beating humans in various tasks of computer vision and other video processing tasks in recent years. Deep learning algorithms have already been applied for the detection and classification of pneumonia \cite{rajpurkar2017chexnet, zech2018variable} and other diseases on radiography. Hence, it has become the natural candidate for the analysis of CXR images to address the automated COVID-19 Screening. Some recent transfer learning approaches presented in \cite{chowdhury2020can, wang2020covid, butt2020deep, farooq2020covid, luz2020efficient} applied to CXR's of patients has been showing promising results in the identification of COVID-19. 
+ 
+ 
+ In this paper, as an effort to improve the current COVID-19 detection using a limited number of publicly available CXR dataset,  we devise and implement a CXR based COVID-19 disease detection and classification pipeline using a modified VGG-16, ResNet50 \cite{he2016deep} and a recent EfficientNetB0 \cite{tan2019efficientnet} architecture. Following the trend from the literature, for our research, we have assembled a three-class labelled dataset with x-ray images from 'normal','COVID-19', 'pneumonia' classes. “COVID-19 Image Data Collection” \cite{cohen2020covid} is currently serving as the main source of COVID-19 CXR's at this stage. To enhance the under-represented COVID-19 class, we train a generative adversarial framework to generate synthetic COVID-19 images during our experiments. Our choice for the convolutional backbone for this research is mostly driven by their lightweight nature and their performance measures in terms of accuracy, precision and recall performances to accurately detect COVID-19.
+
+
+The remaining sections of this paper are organized as follows. In \sect{sec:background}, we review current literature on COVID-19 CXR image analysis using deep learning methods. Design insights are derived from the review of the related work and we provide a description of the dataset for the implemented network in this section. \sect{sec:Methods} gives details on the proposed transfer learning architecture and discusses the necessary settings, pre-trained backbones and procedural stages. The influence of model backbones on the training time, loss and model accuracy are also discussed in this section. The model performance is evaluated in \sect{sec:results} where classification results in terms of recall, precision and overall accuracy are compared and contrasted with concurrent methods reported in the literature. We also present a gradient class activation mapping (Grad-CAM) technique to monitor affected lung regions during disease progression for visual explanations and interpretation purposes. Finally, conclusions are drawn in \sect{sec:conclusion}.
+
+
+\section{Related work and Data pre-processing}
+\label{sec:background}
+\subsection{ Background: Deep learning for Chest X-ray and COVID-19 Diagnosis}
+Chest radiography is widely used for the detection and classification of pneumonia and other pulmonary diseases. However, accurate annotation and analysis of radiography images require a radiology expert which requires significant expertise and processing time.  
+To identify underlying features from radiography images for the purpose diagnostic analysis, a series of recent studies showed promising results using state-of-the-art computational and deep learning algorithms. 
+
+In the context of COVID-19 research, a closer look to the literature showed increased use of CXR images over CT scans due to potentially more data available from various sources. 
+
+In \cite{chowdhury2020can}, a database  of 190 COVID-19, 1345 viral pneumonia, and 1341 normal chest x-ray images was introduced. Training and validation on four different pre-trained networks, namely, Resnet18, DenseNet201, AlexNet and SqueezeNet for the classification of two different schemes (normal and COVID-19 pneumonia; normal, viral and COVID-19 pneumonia). The classification accuracy for both the schemes were 98.3\%, 96.7\% respectively. The sensitivity, specificity and precision value were also reported. In \cite{hemdan2020covidx}, a comparison among seven different well-known deep learning neural networks architectures was presented. In the experiments, they use a small data set with only 50 images in which 25 samples are from healthy patients and 25 from COVID-19 positive patients. In their experiments, the VGG19 and the DenseNet201 were the best performing architectures. In \cite{wang2020covid}, an architecture called COVID-net is created to classify X-ray images into normal, pneumonia, and COVID-19. Differently from the previous work, they use a much larger dataset consisting of 16,756 chest radiography images across 13,645 patient cases. The authors report an accuracy of 92.4\% overall and sensitivity of 80\% for COVID-19.
+ 
+In \cite{farooq2020covid}, a pre-trained ResNet50 model is fine-tuned for the problem of classifying X-ray images into normal, COVID-19, bacterial-pneumonia and viral pneumonia. The authors report better results when compared with the COVID-net, 96.23\% accuracy overall, and 100\% sensitivity for COVID-19. Nevertheless, it is important to highlight that the difference in \cite{farooq2020covid} that it has an extra class than \cite{wang2020covid} and the dataset consists of 68 COVID-19 radiographs from 45 COVID-19 patients, 1,203 healthy patients, 931 patients with bacterial pneumonia and 660 patients with nonCOVID-19 viral pneumonia. Additionally, the test set has only 8 COVID-19 instances for the claim of 100\% sensitivity to be generalized for a larger cohort.    
+ 
+ In a recent paper \cite{luz2020efficient}, the authors aimed towards a light-weight implementation of a COVID-19 classifier and with an accuracy of 93.9\%, COVID-19 Sensitivity of 96.8\% and positive
+predictive value of 100\%  using a flat version of EfficientNet backbone. A hierarchical version of EfficientNet was also reported with 93.5\% accuracy and COVID-19 sensitivity of 80.6\%. 
+
+In this research, we aimed to extend the development of automated multi-class classification models based on chest X-ray images. For that, we created a balanced dataset is created and  put together an efficient and lightweight deep learning pipeline.
+We developed a Generative Adversarial Network (GAN) to generate synthetic COVID-19 data and finally, we fine tuned and optimized the hyper-parameters to improve the performance of the model. 
+
+
+
+\subsection{Dataset Description}
+
+Following the trend of possible classes found in the literature, we have assembled a three-class dataset with labels,  normal - for healthy patients;  COVID-19 - for patients with COVID-19; and pneumonia- for patients with viral and bacterial pneumonia. Our main source of COVID-19 images were from the “COVID-19 Image Data Collection”  publicly available on github \cite{cohen2020covid}. These anonymized COVID-19 images were acquired from websites of medical and scientific associations and COVID related research papers. This dataset is a constantly growing dataset and at the time of reviewing this paper in June 2020, the dataset had in total 673 X-ray and CT images from 349 patients who were affected by COVID-19 and other diseases, such as MERS, SARS, and ARDS \cite{araujo2020covid}. \fig{fig:data_dist} shows the percentage of image distribution as per the diagnosis, where 69\% of the images had some form of COVID-19 findings. We have separated all the 202 Antero-posterior (AP) view of COVID-19 positive x-ray images from this dataset. The age group of the patients that contributed most of the positive cases were from 50 to 80 years old.
+
+
+
+
+
+\begin{table}[h!]{
+\centering
+\caption{Dataset and other settings }\label{data}
+\begin{tabularx}{0.95\textwidth}{c X}
+\toprule
+Settings & Description\\
+\otoprule
+Original Chest X-ray (CXR)& COVID-19: 202; Normal: 300; Pneumonia: 300 \\
+Pre-processing & Intensity normalization, class-label encoding  \\
+Training set division (80\%)& COVID-19: 162; Normal: 240; Pneumonia: 240 \\
+Test set division(20\%)&COVID-19: 40; Normal: 60; Pneumonia: 60 \\
+Augmentation & version1 (v1): Random rotation, width shift, height shift, horizontal flip\\
+ & version2 (v2): 100 CycleGAN  synthesized image for COVID-19, followed by augmentation steps in v1 \\
+Validation set & 5-fold cross-validation on the augmented training set\\
+Pre-trained base models & \\
+VGG16& Fixed-size kernel; parameter: 138M, Input shape:  224, 224,3\\
+Resnet50\cite{he2016deep}  &Residual connections;  26M, Input shape:  224, 224,3 \\
+EfficientNetB0 \cite{tan2019efficientnet}& Mobile inverted bottleneck Convolution with depth, width, and resolution; parameter: 5.3M, Input shape:  224, 224,3\\
+
+\bottomrule
+\end{tabularx}}
+\end{table}
+
+ \begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{images/Finding_PA_Figure_1.png}
+   \caption{COVID-19 Image Data Collection: Image distribution as per diagnosis (69\% COVID) }
+\label{fig:data_dist}
+\end{figure}
+
+
+
+ For assembling the normal and pneumonia classes for our research, we have assembled images from Chest-xray-pneumonia dataset available at Kaggle
+ ({https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia}). There are several large publicly available datasets of CXR images for normal, viral and bacterial pneumonia datasets such as the NIH Chest X-ray Dataset \cite{jaeger2014two}, RSNA Pneumonia Detection Challenge dataset and a more recent COVIDx dataset from \cite{wang2020covid} as well which can be utilized s well.
+ 
+  We randomly selected 300 images for each of the normal and pneumonia classes from the to avoid drastic class imbalance as learning with an imbalanced dataset could produce a biased prediction model towards the classes with more samples. This made our original dataset to be consisting of 802 CXR images. 80\% of the data is then separated as the training set, the remaining 20\% of the dataset contributing as the test data. A detailed division of the dataset can be found in \tab{data}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Pre-processing: Image Resize and Normalization}
+
+ Each image in the assembled dataset is resized to 224x224 pixels to reduce computation time and to maintain consistency throughout our dataset. Additionally, to account for the large variability of the image appearance (brightness and contrast), depending on the acquisition source, radiation dose etc, \cite{guendel2019multi, stephen2019efficient}, an image normalization stage was applied.
+This stage normalizes and scales the pixel intensities to a range of [0, 255]. 
+
+\subsection{Image Augmentation}
+To achieve robust and generalized deep learning models large amounts of data are needed, however, medical imaging data is scarce and labelling the dataset is expensive. We applied two different versions of the augmentation technique on the dataset. In the first version, we applied image augmentation techniques \cite{shorten2019survey} such as random rotation, width shift, height shift, horizontal and vertical flip operations using the ImageDataGenerator functionality from the TensorFlow Keras framework \cite{chollet2018introduction, gulli2017deep}. 
+
+\begin{figure}
+\centering [h!]
+\includegraphics[width=0.95\textwidth]{images/GENARATED IMAGES.png}
+   \caption{ Generated images from cycleGAN for the underrepresented COVID-19 class}
+\label{fig:gan}
+\end{figure}
+
+
+Generative adversarial networks (GAN) offer a novel method for data augmentation used nowadays. Hence, we have used a CycleGAN \cite{zhu2017unpaired} architecture for increasing the under-represented COVID-19 class images (described as version 2 for augmentation in \tab{data}).  Utilizing the normal class from our dataset, we trained the CycleGAN to transform Normal images into COVID-19 images. As a proof-of-concept at this stage, we have generated 100 synthetic COVID-19 images to add to our original training dataset. \fig{fig:gan} shows a few examples of the original and generated images side-by-side. After 5000 iterations of the generator and discriminator training, we have achieved near realistic generated CXR images, though there are shape deformations seen in some cases. To be noted, the dataset after augmentation is still quite small, so we employed five-fold cross-validation during training to avoid the over-fitting
+of the model and the validation set served as a checkpoint for us to the trained model's performance to unseen data.
+
+
+
+
+
+
+\section{Model Architecture}
+\label{sec:Methods}
+\subsection{Transfer learning stages}
+We implemented the COVID-19 disease detection pipeline using an adapted Convolutional Neural Network architecture and trained it in the feature-representation transfer learning mode. We effectively used a pre-trained  VGG-16, ResNet50, and EfficientNet-B0 as our feature extractor. As all these backbones were pre-trained on huge ImageNet dataset, it has learned a good representation of low-level features like spatial, edges, rotation, lighting, shapes and these features can be shared across to enable the knowledge transfer and act as a feature extractor for new images in different computer vision problems.  As in our case, the new images have different categories from the source dataset, the pre-trained model is used to extract relevant features from these images based on the principles of transfer learning. We used TensorFlow, Keras, PyTorch, scikit-learn and OpenCV libraries in python for generating various functionalities of the pipeline. \fig{fig:architecture} shows an illustration of our proposed pipeline for COVID-19 chest X-ray classification.
+\begin{figure}
+\centering
+\includegraphics[width=0.79\textwidth]{images/Architecture_covid19.png}
+   \caption{Transfer learning architecture with pre-trained convolutional backbone for COVID-19 chest x-ray classification}
+\label{fig:architecture}
+
+\end{figure}
+
+ \subsection{Pre-trained model backbone and network head removal}
+
+We removed the network head or the final layers of the pre-trained model ( e.g. VGG-16, ResNet50, and EfficientNetB0 backbone in our case) that was initially trained on the ImageNet dataset. This stage is crucial as the pre-trained model was trained for a different classification task. The removal of network head removed weights and bias associated with the class score at the predictor layers.
+It is then replaced with new untrained layers with the desired number of classes for the new data. We adjusted a three-class network head for the COVID-19 dataset for three possible labels, namely, normal - for healthy patients, COVID-19 - for patients with COVID-19 and pneumonia - for patients with non-COVID-19 pneumonia. 
+ 
+
+ \subsection{Fine Tuning}
+ At the initial stage, we froze the weights of the earlier layers of the pre-trained backbone to help us extract the generic low-level descriptors or patterns from the chest X-ray image data.   In the convolutional networks we used, the first few layers learn very simple and generic features that generalize to almost all types of images. As we went higher up, the features are increasingly more specific to the dataset on which the model was trained. The goal of fine-tuning is to adapt these specialized features to work with the newly fed COVID-19 dataset, rather than overwrite the generic learning.
+ 
+ In the feature extraction experiment, we were only training a few layers on top of a base model. The weights of the pre-trained network were not updated during training.
+At this stage a newly added network head or a classifier is added with desired nuber of classes, and trained for adapting the weights according to the new patterns and distributions. One way to increase performance even further is to train (or "fine-tune") the weights of the top layers of the pre-trained model alongside the training of the classifier we added. This stage forces the weights to be tuned from generic feature maps to features associated specifically with the dataset.
+ 
+ The training of the model has been done offline on an Ubuntu machine with Intel(R) Core i9-9900X CPU @ 3.50GHz, 62GB memory and a GeForce RTX 2060 GPU. The final model was fine-tuned with an Adam optimizer with a learning rate of 0.0001 and a categorical cross-entropy. To be noted, five-fold cross-validation is used during training to avoid the over-fitting of the model. 
+
+
+ 
+ 
+
+
+
+
+
+
+\section{Results and Evaluation}
+\label{sec:results}
+
+\subsection{Training loss associated to various backbone models}
+
+
+\fig{fig:loss} shows the change in loss function for the three convolutional models we experimented during this research. We trained each model for 50 epochs. When the model was trained with the originally assembled three-class dataset, after traditional augmentation the model with VGG16(v1) took the longest during training to reach the stopping loss criteria with a categorical cross-entropy to reach a training dataset accuracy of 0.93. The VGG16(v2) is the same model trained with an enhanced version of the original dataset, where the under-represented COVID-19 class is enhanced by 100 more synthetic images generated with a CycleGAN. The training loss seemingly reached the threshold loss value within 10 epochs in this case. The realistic augmentation in the COVID-19 class definitely has increased the model's accuracy by almost 3\%. A further improvement is achieved when the backbone was replaced with ResNet50 and EfficientNetB0, with the EffiecientNetB0 being the fastest. To be noted, each epoch for the given training dataset and computational setup took about 18 seconds with 232 ms/step for a batch size of 8 and learning rate of 0.0001. The EfficientNetB0  also achieved the best accuracy with the squeeze-and-excitation(SE) optimization stage included in its architecture.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.69\textwidth]{images/Loss_edit.png}
+   \caption{Comparative loss function on the training dataset}
+\label{fig:loss}
+\end{figure}
+
+\begin{table*}{
+     \centering
+    \caption{Class-wise precision performance comparison with other deep learning techniques in literature with our findings for COVID-19 detection}   \label{table:performance_comparison}
+  \begin{tabularx}{0.99\textwidth}{c c |c c c }
+    \toprule
+    Backbone & Accuracy & COVID-19& Normal  &Pneumonia\\
+    \otoprule
+
+    
+     \bf{Our results:} &&&& \\
+     VGG16 (v1 Augmentation)&0.88&0.82&0.84 & 0.98\\
+    VGG16 (v2 GAN Augmentation) &0.90 &0.93&0.87&0.96\\
+    Resnet50&0.943&0.97& 0.93& 0.96 \\
+ \bf{ EfficientNetB0} &0.968 &1.0&0.96&0.96 \\
+     
+ \hline
+   
+    \bf{Concurrent proposed approach:} &&&& \\
+        COVIDNet-CXR Large \cite{wang2020covid}&0.943&0.909&0.917&0.989 \\
+        COVIDNet-CXR Small \cite{wang2020covid}&--&0.964&0.898&0.947  \\  
+    
+  VGG16  \cite{luz2020efficient}&0.77&0.636&--&--\\
+     Flat - EfficientNetB0 \cite{luz2020efficient}&0.90&1&--&--\\
+     Flat - EfficientNetB3 \cite{luz2020efficient}&0.939&1&--&--\\
+ 
+    \bottomrule
+  \end{tabularx}}
+\end{table*}
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.99\textwidth]{images/CM_3 models_v2.png}
+   \caption{Confusion matrix and overall accuracy of three backbone models used in this research}
+\label{fig:confusionmatrix}
+\end{figure*}
+
+
+\subsection{Model evaluation matrices}
+%%%%%%%%%%%%%%%%%% RESULTS %%%%%%%%%%%%%%%%%%
+
+If True Positive ($T_P$) is the number of COVID-19 classified
+rightly as COVID; True Negative ($T_N$) is the number of normal
+CXR's rightly classified normal; False Positive ($F_P$) is the
+number of normal events misclassified as COVID-19 and noCovid pneumonia and False
+Negative ($F_N$) is the number of COVID-19's misclassified as
+normal or pneumonia, we can define accuracy, recall and precision of a model can be defined using the following equations \cite{SOKOLOVA2009}.
+
+\begin{itemize}
+\item {Accuracy: It is an indicator of the total number of correct predictions provided by the model and defined as follows:
+
+\begin{align}
+\text{Accuracy} =\frac{T_P+T_N}{T_P+T_N+F_P+F_N}.
+\end{align}
+}
+\item {Recall and precision: Two of the most commonly used performance measures, recall and precision measures are defined as follows:
+\begin{align}
+\text{Recall or Sensitivity} =\frac{T_P}{T_P+F_N}.
+\end{align}
+\begin{align}
+\text{Precision or positive predictive value} =\frac{T_P}{T_P+F_P}.
+\end{align}}
+
+ 
+%\item {F1 Score:It is the harmonic mean of precision and recall and defined as follows:
+%\begin{align}
+%{\text{F1 \ Score}} =\frac{2*{\text{Precision}}*{\text{Recall}}}{\text{Precision+Recall}}.
+%\end{align}}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Our results show reasonably accurate performance with an overall detection accuracy of  91.2\%, 95.3\%, 96.7\% for our exemplar VGG16, ResNet50 and EfficientB0 backbones respectively on the fixed test set of 40 COVID-19, 60 Normal and 60 CXR images for the Pneumonia class. We presented the confusion matrix plot for the three backbone models under consideration in \fig{fig:confusionmatrix}. The rows correspond to the predicted class (Output Class) and the columns correspond to the true class (Target Class). The diagonal cells in the confusion matrix correspond to observations that are correctly classified ($T_P$ and $T_N$'s). The off-diagonal cells correspond to incorrectly classified observations ($F_P$ and $F_N$'s). The number of observations is shown in each cell.
+
+
+\subsection{Comparison with other approaches}
+We have summarized a class-wise precision and recall performances from various experiments in  \tab{table:performance_comparison}. Additionally, we compared our experimental results with some concurrent proposed approach. As can be seen from the results presented in \tab{table:performance_comparison}, for the base VGG16 model, when the under-represented COVID-19 class is enhanced by 100 more synthetic images generated with a CycleGAN, referred on the \tab{data} as version 2 augmentation, there was a 2\% improvement in overall accuracy from the model, and the precision performance for the COVID-19 class has been improved from 0.88 to 0.93 through the addition of these realistically augmented COVID-19 data. When comparing this to the VGG16 model performance with a COVID-19 class precision value of 0.636 presented in Luz et al.\cite{luz2020efficient}, this showed a clear improvement, though the dataset used for training are not directly comparable. The VGG16 model, when saved for the inference stage, has a memory footprint of 57 megabytes with 14.7 million parameters. For the ResNet50 base model, the overall accuracy has improved to 95.3\% due to a larger number of features extracted by the model, leading to a better distinction between class. This model, when serialized and saved, has a memory footprint of 97 megabytes with 23.7 million parameters. In the approach presented in \cite{farooq2020covid} with ResNet50, the accuracy achieved is 96.23\%, which is slightly higher than the value we achieved. However, in their test dataset, there were only 8 instances for the COVID-19 class in a four-class classification scenario, the value may not be robust and generalized for different class distribution.
+
+Our experimentation with the EfficientNetBO base model has achieved a 96.8\% overall accuracy, with a COVID-19 class precision and recall value of 1 and 0.975 respectively. When compared to the COVIDNet-CXR model proposed by Wang et al \cite{wang2020covid}, the values were 0.909 and 0.968 respectively. Our version of EfficientNetB0 has higher precision, which is critical as the goal is to be able to detect as many positive COVID-19 cases to reduce the community spread.
+Using the same backbone, the EffcientNetB3 proposed by Luz et al\cite{luz2020efficient} has shown a precision of 100\% for the COVID-19 class, while the overall accuracy is lower than the version we have. To be noted, the EffcientNetB3 model has 12.3 million parameters whereas EffcientNetB0 has 5.3 million parameters, contributing a lighter memory footprint (21 megabytes) than its scaled version. Additionally, the depth, width and resolution scaling in the EfficientNet architecture with squeeze-and-excitation(SE) optimization seemingly outperformed both VGG and ResNet architecture in our experiments.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Coarse region localization map with gradient class activation}
+ For visual explanations and interpretation purposes, we visualized the regions of input that are important for predictions and a gradient class activation mapping (Grad-CAM) technique \cite{selvaraju2017grad} is used in the pipeline to produce a coarse localization map of the highlighted regions in the image. In \fig{fig:activation_map_2}, activation map visualization for the three classes under consideration.  The first row represents the original images, and the second, the activation maps. The first column presents a healthy chest x-ray sample, the second, from a patient with pneumonia, and the third one, from a patient with COVID-19. The rightmost CXR taken on the patient shows bilateral patchy ground-glass opacities. These activation maps can be used to monitor affected lung regions during disease progression and severity stages.  In \fig{fig:activation_map}, for a patient's x-ray in ICU-care at day 3, 7 and 9, the coarse localization map showed increased inflammation indicating disease severity. There are multi-focal patch/nodular consolidations and ground-glass opacities around the right mid to lower lung zone observed on day 9.
+ 
+ Though clinical symptoms such as consolidations and ground-glass opacities \cite{li2020ct} are more accurately recognizable in Computed Tomography (CT) scans, CXR's could still provide a coarse and cheap bed-side indication of such symptoms if these visualizations are enhanced by labels and clinical notes from radiologists and domain experts.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/Picture2_3 class.png}
+   \caption{Activation map visualization for the three classes under consideration. The First column presents a healthy chest x-ray sample, the second, from a patient with
+pneumonia, and the third one, from a patient with COVID-19, visualizing affected regions in lungs.}
+\label{fig:activation_map_2}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/Picture2_activation map.png}
+   \caption{Activation map visualization for a patient's x-ray in ICU-care at day 3, 7 and 9, visualising increased inflammation indicating disease severity.}
+\label{fig:activation_map}
+\end{figure}
+
+\section{conclusion}
+\label{sec:conclusion}
+ Deep learning applied to chest X-rays of patients has been showing promising results in the identification of COVID-19. In this research, we experimented on lightweight convolutional network architecture with three backbones (VGG-16, ResNet50, and EfficientNetB0 pre-trained on ImageNet dataset) for detecting COVID-19 and associated infection from chest X-ray images. Experiments were conducted to evaluate the convolutional neural networks performance on the generally augmented dataset and on an extended version of the dataset that utilized application of generative adversarial network-based augmentation using CycleGAN.  Even with a limited number of images in the COVID-19 class, promising results achieved by the network on the test dataset with a recall value over 90\% and a precision value over 93\% for all the three models. We would like to emphasize on the fact that, with more images and new data collected for the COVID-19 class, it will be possible to improve the training and to improve sensitivity and detection rate. Our results also indicated the application of generative adversarial network-based augmentation techniques can contribute to accuracy improvement and can produce a more generalized and robust model.
+
+In future, provided the clinical notes and metadata related to survival, need for intubation, need for supplemental oxygen, it is possible to train mixed image and metadata models aiming to provide prognostic and severity predictions \cite{cohen2020covid, wang2020covid}. These models could be highly useful for risk stratification, patient management, and personalized care planning in this critical resource-constrained pandemic scenario. 
+
+ All models developed in this work have a memory footprint below 100 megabytes. Hence, another future direction from this research will be to extend the trained models implementation on conventional smartphone processor to do fast and cheap on-device inference to provide a proof of concept of transferring the capability of deep learning models on mobile devices  \cite{li2020covidmobilexpert}. We would like to build on our previous experience in transferring such models using the TensorFlow lite (TFlite) library \cite{tflite2019, zebin2019design}.
+
+
+
+
+% BibTeX users please use one of
+\bibliographystyle{spbasic_updated}      % basic style, author-year citations
+%\bibliographystyle{spmpsci}      % mathematics and physical sciences
+%\bibliographystyle{spphys}       % APS-like style for physics
+\bibliography{ref.bib}   % name your BibTeX data base
+
+
+
+
+
+
+\end{document}
+% end of file template.tex
+
