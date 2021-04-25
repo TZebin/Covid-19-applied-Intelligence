@@ -28,7 +28,7 @@ import math
 
 from tensorflow.keras import backend as K
 
-covid_path = 'C:/Users/User/Desktop/keras-covid-19_Adrian/dataset/covid/'
+covid_path = './dataset/covid/'
 covid_files = os.listdir(covid_path)
 #covid_files.remove('.DS_Store')
 
@@ -247,7 +247,7 @@ model.save("/kaggle/working/model_covid_vs_pneumonia_vs_normal.h5")
 from tensorflow.keras.models import load_model
  
 # load model
-model = load_model('C:/Users/User/Desktop/keras-covid-19_Adrian/model_pneumonia_vs_covid.h5')
+model = load_model('./model_pneumonia_vs_covid.h5')
 
 
 # In[9]:
