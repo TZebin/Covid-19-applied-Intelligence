@@ -61,7 +61,7 @@ for file in tqdm(pne_files):
     labels_pne.append('pneum')
 
 
-norm_path = 'C:/Users/User/Desktop/keras-covid-19_Adrian/dataset/normal/'
+norm_path = './dataset/normal/'
 norm_files = os.listdir(norm_path)
 #norm_files.remove('.DS_Store')
 
@@ -306,7 +306,7 @@ def get_class_activation_map(ind,path,files) :
     # plt.imshow(upsample,alpha=0.5)
     # plt.imshow(img_gray)
     #plt.imshow(upsample * img_gray)
-    output_path_gradcam = 'C:/Users/User/Desktop/keras-covid-19_Adrian/output' + files[ind] + 'gradcam.jpeg'
+    output_path_gradcam = './output' + files[ind] + 'gradcam.jpeg'
     plt.imsave(output_path_gradcam,upsample * img_gray)
     
     #plt.show()
@@ -333,47 +333,11 @@ get_class_activation_map(5,path,files)
 path + files[5]
 
 
-
-# import shutil
-# shutil.rmtree('/kaggle/working/output_images/')
 os.remo
 
 
 
 np.arange(0,11)
-
-
-# In[ ]:
-
-
-# img_path = covid_path + covid_files[1]
-# covid_img = cv2.imread(img_path)
-# covid_img = cv2.cvtColor(covid_img, cv2.COLOR_BGR2RGB)
-# covid_img = cv2.resize(covid_img, (224, 224))
-# covid_img = np.expand_dims(covid_img,axis=0)
-
-
-# In[ ]:
-
-
-#norm_img.shape
-
-
-# In[ ]:
-
-
-#covid_img.shape
-
-
-# In[ ]:
-
-
-#predict = model.predict(norm_img)
-# print(decode_predictions(predict,top=3))
-# target_class = np.argmax(predict[0])
-
-
-# In[ ]:
 
 
 predict = model.predict(norm_img)
@@ -384,103 +348,15 @@ predict = model.predict(norm_img)
 
 predict
 
-
-# In[ ]:
-
-
-# target_class = np.argmax(predict[0])
-# target_class
-
-
-# In[ ]:
-
-
-#print("Target Class is covid")
-
-
-# In[ ]:
-
-
-#last_conv = model.get_layer('block5_conv3')
-
-
-# In[ ]:
-
-
-#grads = K.gradients(model.output[:,0],last_conv.output)[0]
-
-
-# In[ ]:
-
-
-# pooled_grads = K.mean(grads,axis=(0,1,2))
-# iterate = K.function([model.input],[pooled_grads,last_conv.output[0]])
-# pooled_grads_value,conv_layer_output = iterate([covid_img])
-
-
-# In[ ]:
-
-
-# for i in range(512):
-#     conv_layer_output[:,:,i] *= pooled_grads_value[i]
-# heatmap = np.mean(conv_layer_output,axis=-1)
-
-
-# In[ ]:
-
-
-# for x in range(heatmap.shape[0]):
-#     for y in range(heatmap.shape[1]):
-#         heatmap[x,y] = np.max(heatmap[x,y],0)
-
-
-# In[ ]:
-
-
-# heatmap = np.maximum(heatmap,0)
-# heatmap /= np.max(heatmap)
-# plt.imshow(heatmap)
-
-
-# In[ ]:
-
-
 #img_gray = cv2.cvtColor(norm_img[0], cv2.COLOR_BGR2GRAY)
 
 
-# In[ ]:
-
 
 upsample = cv2.resize(heatmap, (224,224))
 # plt.imshow(upsample,alpha=0.5)
 # plt.imshow(img_gray)
 plt.imshow(upsample * img_gray)
 plt.show()
-
-
-# In[ ]:
-
-
-upsample = cv2.resize(heatmap, (224,224))
-# plt.imshow(upsample,alpha=0.5)
-# plt.imshow(img_gray)
-plt.imshow(upsample * img_gray)
-plt.show()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
